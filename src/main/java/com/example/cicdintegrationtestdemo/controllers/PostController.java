@@ -5,8 +5,10 @@ import com.example.cicdintegrationtestdemo.services.PostService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "api/posts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PostController {
     private final PostService postService;
 
@@ -14,32 +16,32 @@ public class PostController {
         this.postService = postService;
     }
 
-    @GetMapping("/posts")
-    public String getAllPosts() {
-        return postService.getAllPosts().toString();
+    @GetMapping()
+    public List<Post> getAllPosts() {
+        return postService.getAllPosts();
     }
 
-    @GetMapping("/posts/{id}")
-    public String getPostById(@PathVariable Long id) {
-        return postService.getPostById(id).toString();
+    @GetMapping("{id}")
+    public Post getPostById(@PathVariable Long id) {
+        return postService.getPostById(id);
     }
 
-    @GetMapping("/posts/count")
+    @GetMapping("count")
     public Long countPosts() {
         return postService.countPosts();
     }
 
-    @PostMapping("/posts")
+    @PostMapping()
     public Post savePost(@RequestBody Post post) {
         return postService.savePost(post);
     }
 
-    @DeleteMapping("/posts/{id}")
+    @DeleteMapping("{id}")
     public void deletePostById(@PathVariable Long id) {
         postService.deletePostById(id);
     }
 
-    @DeleteMapping("/posts")
+    @DeleteMapping()
     public void deleteAllPosts() {
         postService.deleteAllPosts();
     }
