@@ -1,0 +1,5 @@
+ALTER TABLE post
+    ALTER COLUMN content SET NOT NULL;
+
+ALTER TABLE post
+    ALTER COLUMN title SET NOT NULL;

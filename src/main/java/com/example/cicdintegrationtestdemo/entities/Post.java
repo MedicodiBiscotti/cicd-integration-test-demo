@@ -1,11 +1,12 @@
 package com.example.cicdintegrationtestdemo.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "post")
 public class Post {
@@ -13,6 +14,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @NonNull
+    @Column(nullable = false)
     private String title;
+    @NonNull
+    @Column(nullable = false)
     private String content;
 }
