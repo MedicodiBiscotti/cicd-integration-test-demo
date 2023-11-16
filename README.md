@@ -11,6 +11,7 @@ Spring Boot application. This is a simple REST API.
   - [Local test database](#local-test-database)
   - [Dotenv](#dotenv)
   - [CI/CD](#cicd)
+  - [Docker image](#docker-image)
 
 ## Usage
 
@@ -92,3 +93,16 @@ use [service containers](https://docs.github.com/en/actions/using-containerized-
 spin up a database to test against.
 
 Finally, we build a Docker image and deploy to Docker Hub.
+
+### Docker image
+
+For building a Docker image, we use a Dockerfile, as you do. There were two options for how to go about this.
+
+1. Build `.jar` artefact in a multistage build process.
+2. Copy in `.jar` produced during tests.
+
+The first option is more standalone. It takes source code and produces a runnable image.
+
+The second option is more efficient in terms of the CI/CD pipeline, but it requires a Maven build process to have preceded the building of the image.
+
+Currently, we're doing the first option, but it feels bad to build the application twice. Especially when it has to pull all dependencies from the Maven repository again. When building in the GitHub Actions runner, it can cache builds and dependencies, but when doing it in a Dockerfile, it starts fresh. Unless we can copy in Maven dependencies, but at that point, just copy in the artefact.
