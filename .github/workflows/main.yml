@@ -50,4 +50,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.sha }}
+          tags: ${{ github.repository }}:${{ github.sha }}
