@@ -16,4 +16,4 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Test with Maven
-        run: ./mvnw -B verify
+        run: mvn -B verify
