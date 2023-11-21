@@ -41,6 +41,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      # Needed for Dockerfile_artifact
+      - uses: actions/checkout@v4
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -60,6 +63,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           file: Dockerfile_artifact
+          # Needed to prevent default Git context overwriting the downloaded artifact
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.sha }}
