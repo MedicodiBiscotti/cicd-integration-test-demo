@@ -49,6 +49,10 @@ jobs:
         id: meta
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+          flavor: |
+            latest=true
+          tags: |
+            type=sha,prefix=
 
       - name: Build and push
         uses: docker/build-push-action@v5
