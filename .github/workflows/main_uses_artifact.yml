@@ -1,4 +1,4 @@
-name: Test and Deploy with Artifact
+name: Test and Deploy with artifact
 on:
   push:
     branches:
@@ -31,10 +31,19 @@ jobs:
       - name: Test with Maven
         run: mvn -B verify
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: jar
+          path: target/*.jar
+
   deploy-to-docker:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      # Needed for Dockerfile_artifact
+      - uses: actions/checkout@v4
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -44,18 +53,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract meta-data
-        uses: docker/metadata-action@v5
-        id: meta
+      - name: Download artifact
+        uses: actions/download-artifact@v3
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+          name: jar
+          path: target
 
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          file: Dockerfile_src
+          file: Dockerfile_artifact
+          # Needed to prevent default Git context overwriting the downloaded artifact
+          context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
