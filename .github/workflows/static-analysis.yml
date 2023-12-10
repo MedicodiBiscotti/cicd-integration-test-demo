@@ -1,0 +1,35 @@
+name: Static code analysis
+on: workflow_call
+
+jobs:
+  static-code-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: PMD
+        uses: pmd/pmd-github-action@v1
+        id: pmd
+        with:
+          rulesets: 'ruleset.xml'
+
+      - name: Fail build on PMD violations
+        if: steps.pmd.outputs.violations > 100
+        run: exit 1
+
+      - name: Checkstyle
+        uses: nikitasavinov/checkstyle-action@0
+        with:
+          checkstyle_config: 'sun_checks.xml'
+          fail_on_error: false # default: false
+
+#      - name: JaCoCo
+#        uses: Madrapps/jacoco-report@v1

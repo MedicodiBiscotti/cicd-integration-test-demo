@@ -31,6 +31,9 @@ jobs:
       - name: Test with Maven
         run: mvn -B verify
 
+  static-code-analysis:
+    uses: ./.github/workflows/static-analysis.yml
+
   deploy-to-docker:
     needs: test
     runs-on: ubuntu-latest
