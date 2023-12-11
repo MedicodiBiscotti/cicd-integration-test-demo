@@ -1,9 +1,6 @@
 name: Static code analysis
 on:
   workflow_call:
-    secrets:
-      github_token:
-        required: true
 
 jobs:
   static-code-analysis:
@@ -33,7 +30,7 @@ jobs:
         uses: nikitasavinov/checkstyle-action@0.6.0
         if: github.event_name == 'pull_request'
         with:
-          github_token: ${{ secrets.token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           checkstyle_config: 'sun_checks.xml'
           fail_on_error: false # default: false
 
@@ -42,13 +39,13 @@ jobs:
         uses: Madrapps/jacoco-report@v1
         if: github.event_name == 'pull_request'
         with:
-          token: ${{ secrets.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           paths: 'target/site/jacoco/jacoco.xml'
           minimum-coverage-overall: 40
           minimum-coverage-changed-files: 60
 
       - name: Fail build on JaCoCo violations
-        if: steps.jacoco.outputs.coverage-overall < 10 || steps.jacoco.outputs.coverage-changed-files < 10
+        if: github.event_name == 'pull_request' && (steps.jacoco.outputs.coverage-overall < 10 || steps.jacoco.outputs.coverage-changed-files < 10)
         # 10% coverage because we do want to actually build something
         run: exit 1
 

@@ -33,8 +33,6 @@ jobs:
 
   static-code-analysis:
     uses: ./.github/workflows/static-analysis.yml
-    secrets:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-to-docker:
     needs: test
