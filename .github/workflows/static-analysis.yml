@@ -1,6 +1,9 @@
 name: Static code analysis
 on:
   workflow_call:
+    secrets:
+      github_token:
+        required: true
 
 jobs:
   static-code-analysis:
@@ -17,8 +20,8 @@ jobs:
           cache: 'maven'
 
       - name: PMD
-        uses: pmd/pmd-github-action@v1
         id: pmd
+        uses: pmd/pmd-github-action@v1
         with:
           rulesets: 'ruleset.xml'
 
@@ -35,5 +38,17 @@ jobs:
           fail_on_error: false # default: false
 
       - name: JaCoCo
+        id: jacoco
         uses: Madrapps/jacoco-report@v1
         if: github.event_name == 'pull_request'
+        with:
+          token: ${{ secrets.token }}
+          paths: 'target/site/jacoco/jacoco.xml'
+          minimum-coverage-overall: 40
+          minimum-coverage-changed-files: 60
+
+      - name: Fail build on JaCoCo violations
+        if: steps.jacoco.outputs.coverage-overall < 10 || steps.jacoco.outputs.coverage-changed-files < 10
+        # 10% coverage because we do want to actually build something
+        run: exit 1
+
