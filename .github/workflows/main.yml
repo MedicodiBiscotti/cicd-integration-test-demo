@@ -33,7 +33,6 @@ jobs:
 
   static-code-analysis:
     uses: ./.github/workflows/static-analysis.yml
-    secrets: inherit
 
   deploy-to-docker:
     needs: test
