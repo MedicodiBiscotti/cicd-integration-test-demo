@@ -1,0 +1,39 @@
+name: Build and test
+on:
+  workflow_call:
+    secrets:
+      DATABASE_USER:
+        required: true
+      DATABASE_PASSWORD:
+        required: true
+      TEST_DATABASE:
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      TEST_DATABASE_URL: jdbc:mysql://localhost:3306/${{ secrets.TEST_DATABASE }}
+    services:
+      postgres:
+        image: mysql:8.0.35
+        env:
+          MYSQL_USER: ${{ secrets.DATABASE_USER }}
+          MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.TEST_DATABASE }}
+        ports:
+          - 3306:3306
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+      - name: Test with Maven
+        run: mvn -B verify
