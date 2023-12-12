@@ -17,7 +17,7 @@ jobs:
       DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       TEST_DATABASE_URL: jdbc:mysql://localhost:3306/${{ secrets.TEST_DATABASE }}
     services:
-      postgres:
+      mysql:
         image: mysql:8.0.35
         env:
           MYSQL_USER: ${{ secrets.DATABASE_USER }}
